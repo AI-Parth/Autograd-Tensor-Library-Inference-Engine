@@ -41,7 +41,6 @@ RandomizedCoordinateDescent::RandomizedCoordinateDescent(
 // Randomly select `fraction * total_coords` coordinates per parameter
 // and apply the gradient update only to those coordinates.
 void RandomizedCoordinateDescent::step() {
-    std::mt19937 rng(std::random_device{}());
     for (Tensor* p : params) {
         if (p->grad.empty()) continue;
         size_t total = p->data.size();

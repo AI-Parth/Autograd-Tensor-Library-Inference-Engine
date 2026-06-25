@@ -2,6 +2,7 @@
 
 #include "Tensor.h"
 #include <vector>
+#include <random>
 
 /**
  * ============================================================
@@ -106,4 +107,5 @@ private:
     std::vector<Tensor*> params;
     float                lr;
     float                fraction;
+    std::mt19937         rng{std::random_device{}()};
 };

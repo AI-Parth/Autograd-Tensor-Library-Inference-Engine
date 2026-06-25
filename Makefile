@@ -6,6 +6,9 @@ SRCS := src/Tensor.cpp        \
         src/GraphEngine.cpp   \
         src/MemoryPool.cpp    \
         src/Optimizer.cpp     \
+        src/nn/Linear.cpp     \
+        src/nn/ReLULayer.cpp  \
+        src/nn/Sequential.cpp \
         src/ops/Add.cpp       \
         src/ops/MatMul.cpp    \
         src/ops/ReLU.cpp      \

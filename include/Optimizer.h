@@ -4,6 +4,18 @@
 #include <vector>
 #include <random>
 
+class Optimizer {
+public:
+    Optimizer(std::vector<Tensor*> params, float learning_rate);
+    virtual void step() = 0;
+    virtual void zero_grad();
+    virtual ~Optimizer() = default;
+
+protected:
+    std::vector<Tensor*> params;
+    float                lr;
+};
+
 /**
  * ============================================================
  *  SGD  —  Stochastic Gradient Descent optimizer
@@ -27,7 +39,7 @@
  *   }
  * ============================================================
  */
-class SGD {
+class SGD : public Optimizer {
 public:
     /**
      * @param params        Pointers to parameter tensors to optimise.
@@ -48,11 +60,7 @@ public:
      * If omitted, gradients from previous iterations accumulate,
      * producing incorrect (too-large) updates.
      */
-    void zero_grad();
-
-private:
-    std::vector<Tensor*> params;
-    float                lr;
+    void zero_grad() override;
 };
 
 
@@ -84,7 +92,7 @@ private:
  *   - Variance-reduced SVRCD variant
  * ============================================================
  */
-class RandomizedCoordinateDescent {
+class RandomizedCoordinateDescent : public Optimizer {
 public:
     /**
      * @param params        Pointers to parameter tensors.
@@ -101,11 +109,29 @@ public:
      */
     void step();
 
-    void zero_grad();
+    void zero_grad() override;
 
 private:
-    std::vector<Tensor*> params;
-    float                lr;
-    float                fraction;
-    std::mt19937         rng{std::random_device{}()};
+    float        fraction;
+    std::mt19937 rng{std::random_device{}()};
+};
+
+class Adam : public Optimizer {
+public:
+    Adam(std::vector<Tensor*> params,
+         float                learning_rate = 0.001f,
+         float                beta1         = 0.9f,
+         float                beta2         = 0.999f,
+         float                eps           = 1e-8f);
+
+    void step() override;
+    void zero_grad() override;
+
+private:
+    float                           beta1;
+    float                           beta2;
+    float                           eps;
+    size_t                          timestep;
+    std::vector<std::vector<float>> first_moment;
+    std::vector<std::vector<float>> second_moment;
 };
